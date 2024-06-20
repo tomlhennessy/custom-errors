@@ -37,6 +37,55 @@ Creating custom error types in JavaScript helps with more specific and informati
 
     • Example:
     ```js
-    this.name = `CustomError`;
+    this.name = 'CustomError';
     this.message = `Custom error message with ${fieldName}`;
     ```
+
+* Example 1: Basic Custom Error
+```js
+class SearchSyntaxError extends SyntaxError {
+    constructor(...params) {
+        super(...params);
+        if (Error.captureStackTrace) {
+            Error.captureStackTrace(this, SearchSyntaxError);
+        }
+        this.name = 'SearchSyntaxError';
+    }
+}
+```
+
+* Example 2: Custom Error with Additional Information
+```js
+class MissingRequiredFieldError extends Error {
+    constructor(fieldName = 'field', ...params) {
+        super(...params);
+        if(Error.captureStackTrace) {
+            Error.captureStackTrace(this, MissingRequiredFieldError);
+        }
+        this.name = 'MissingRequiredFieldError';
+        this.fieldName = fieldName;
+        this.message = `Missing required field "${fieldName}".`;
+        this.date = new Date();
+    }
+}
+```
+
+* Using the Custom Error
+```js
+try {
+    throw new MissingRequiredFieldError(`email`);
+} catch(e) {
+    console.error(e.name);      // MissingRequiredFieldError
+    console.error(e.fieldName); // email
+    console.error(e.message);   // Missing required field "email"
+    console.error(e.stack);     // stack trace
+}
+```
+
+* Summary
+    • Custom error classes help create more specific error types
+    • Inheritance from built-in error classes allows reuse of existing functionality
+    • Constructor customisation enables additional debugging information
+    • Proper stack trace and name setting are crucial for debugging
+
+Using custom error types makes code more rebust and easier to debug, providing more context-specific error messages
